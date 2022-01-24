@@ -20,7 +20,7 @@ public:
 
 int main(int argc, char *argv[])
 {
-  int counter = 0;
+
   WINDOW *okno;         /* Game window */
   okno = initscr();     /* Start curses mode */
   nodelay(okno, 1);     /* Dont wait for input */
@@ -29,59 +29,50 @@ int main(int argc, char *argv[])
   noecho();             /* Don't echo() while we do getch */
   curs_set(0);          /* Invisible cursor */
 
+  /* Counter allows us to move the ball with delay */
+  int counter = 0;
   Pong mainPong; /* The main pong */
   /* Set default position of main pong */
   mainPong.yPos = LINES - 1;
   mainPong.xPos = COLS / 2;
-  mvprintw(mainPong.yPos, mainPong.xPos, "o");
 
+  /* Set default position of ball */
   Ball ball;
   ball.xPos = COLS / 2;
   ball.yPos = 0;
   ball.xVel = 1;
   ball.yVel = 1;
-  mvprintw(ball.yPos, ball.xPos, "o");
-  refresh();
 
-  /* Steering loop */
+  unsigned score = 0;
+
+  /* Main loop */
   while (true)
   {
+    mvprintw(1, 1, "Score: %d", score);
     counter++;
     int key = getch();
     if (key == 'k' || key == 'q')
     {
       break;
     }
-    if (key == KEY_LEFT)
+    /* Move main pong */
+    if (key == KEY_LEFT && mainPong.xPos > 0)
     {
       mainPong.xPos--;
-      refresh();
-      clear();
     }
-    else if (key == KEY_RIGHT)
+    else if (key == KEY_RIGHT && mainPong.xPos < COLS - mainPong.width)
     {
       mainPong.xPos++;
-      refresh();
-      clear();
     }
-    /* else if (key == KEY_UP)
-    {
-      mainPong.yPos--;
-      refresh();
-      clear();
-    }
-    else if (key == KEY_DOWN)
-    {
-      mainPong.yPos++;
-      refresh();
-      clear();
-    } */
+
     clear();
-    if (counter % 20 == 0)
+    /* Move ball with delay from counter */
+    if (counter % 30 == 0)
     {
       ball.xPos += ball.xVel;
       ball.yPos += ball.yVel;
     }
+    /* Bounce the ball */
     if (ball.yPos == LINES - 2)
     {
       for (int i = mainPong.xPos; i < mainPong.xPos + mainPong.width; i++)
@@ -89,6 +80,7 @@ int main(int argc, char *argv[])
         if (ball.xPos == i)
         {
           ball.yVel = -1;
+          score++;
         }
       }
     }
@@ -108,10 +100,10 @@ int main(int argc, char *argv[])
     mvprintw(ball.yPos, ball.xPos, "o");
     for (int i = 0; i < mainPong.width; i++)
     {
-      mvprintw(mainPong.yPos, mainPong.xPos + i, "o");
+      mvprintw(mainPong.yPos, mainPong.xPos + i, "-");
     }
 
-    usleep(5 * 1000);
+    usleep(5000);
 
     refresh();
   }
