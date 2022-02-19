@@ -94,8 +94,6 @@ int move_paddle(WINDOW *win, Paddle &paddle)
 
 void single_player(WINDOW *win)
 {
-  /* Counter allows us to move the ball with delay */
-  /*   int counter = 0; */
   Ball ball1;
   ball1.x = 10;
   ball1.y = 10;
@@ -106,15 +104,6 @@ void single_player(WINDOW *win)
   paddle1.width = 5;
   while (true)
   {
-    /* counter++;
-    if (counter % 350 == 0)
-    {
-      ball1.x += 1;
-      ball1.y += 1;
-      mvwprintw(win, ball1.x, ball1.y, "o");
-      mvwprintw(win, ball1.x - 1, ball1.y - 1, " ");
-    } */
-
     int quit = move_paddle(win, paddle1);
     if (quit == 1)
     {
