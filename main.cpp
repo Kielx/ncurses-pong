@@ -14,53 +14,52 @@ public:
   int x, y, width;
 };
 
-WINDOW *
-init_screen()
+WINDOW *init_screen()
 {
-  WINDOW *win; /* Okno gry */
+  WINDOW *win;                /* Game window pointer */
+  initscr();                  /* Turn on curses mode */
+  win = newwin(30, 80, 1, 1); /* Create new game window */
+  nodelay(stdscr, TRUE);      /* Don't wait for keypress */
+  refresh();                  /* Refreshing screen */
+  box(win, 0, 0);             /* Draw a box around the window */
+  keypad(stdscr, TRUE);       /* Turn on arrow keys*/
+  noecho();                   /* Don't print key pressed to the screen */
+  curs_set(0);                /* Hide cursor */
 
-  initscr();                  /* Włączamy tryb curses */
-  win = newwin(30, 80, 1, 1); /* Tworzymy okno gry */
-  refresh();                  /* Odświeżamy ekran */
-  box(win, 0, 0);             /* Rysujemy ramkę */
-  keypad(stdscr, TRUE);       /* Włączamy klawisze strzałek*/
-  noecho();                   /* Nie wyświetlaj klawisza na ekran */
-  curs_set(0);                /* Ukryj kursor */
-  nodelay(stdscr, TRUE);      /* Nie czekaj na wprowadzenie znaku */
-  return win;                 /* Zwracamy okno gry */
+  return win; /* Return game window */
 }
 
 /**
- * @brief Funkcja odpowiedzialna za sterowanie paletka
+ * @brief Function that moves the paddle
  *
- * @param win - okno gry w którym będzie się poruszać paletka
- * @param paddle - paletka, którą sterujemy
- * @return int - zwraca 1 gdy użytkownik chce opuścić grę
+ * @param win - game window in which the paddle is located
+ * @param paddle - paddle to be moved
+ * @return int - returns 1 if user wants to quit the game, 0 otherwise
  */
 int move_paddle(WINDOW *win, Paddle &paddle)
 {
-  // pętla odpowiedzialna za tworzenie dodatkowych pól w kształcie paletki
-  // np. jeśli nasza paletka ma szerokość 5 to musimy stworzyć 5 pól
+  // loop responsible for creating paddle blocks
+  // e.g if our paddle is of width 5 - then we need to create 5 separate 'blocks'
   for (int i = 0; i < paddle.width; i++)
   {
     mvwprintw(win, paddle.y, paddle.x + i, "-");
   }
-  // Pobieramy klawisz sterowania od użytkownika,
-  // w przypadku klawisza 'q' opuszczamy grę zwracając 1
+  // Get a steering key from the user
+  // If it's the 'q' key, return 1 to indicate that the user wants to quit the game
   int ch;
   ch = getch();
   switch (ch)
   {
   case 'q':
     return 1;
-  // Przesuwamy paletkę o jeden w lewo po naciśnięciu klawisza strzałki w lewo `<-`
+  // Move the paddle to the left on left arrow key press `<-`
   case KEY_LEFT:
     if (paddle.x > getbegx(win))
     {
       paddle.x--;
-      // Pętla odpowiedzialna za tworzenie dodatkowych pól w kształcie paletki
-      // np. jeśli nasza paletka ma szerokość 5 to musimy stworzyć 5 pól
-      // Dodatkowo usuwamy pola paletki z poprzedniego miejsca
+      // loop responsible for creating paddle blocks
+      // e.g if our paddle is of width 5 - then we need to create 5 separate 'blocks'
+      // Remove the previous paddle blocks
       for (int i = 0; i < paddle.width; i++)
       {
         mvwprintw(win, paddle.y, paddle.x + i, "-");
@@ -68,20 +67,19 @@ int move_paddle(WINDOW *win, Paddle &paddle)
       }
     }
     break;
-  // Przesuwamy paletkę o jeden w prawo po naciśnięciu klawisza strzałki w prawo `->`
+    // Move the paddle to the right on right arrow key press `->`
   case KEY_RIGHT:
     if (paddle.x < getmaxx(win) - 1 - paddle.width)
     {
       paddle.x += 1;
-      // Pętla odpowiedzialna za tworzenie dodatkowych pól w kształcie paletki
-      // np. jeśli nasza paletka ma szerokość 5 to musimy stworzyć 5 pól
-      // Dodatkowo usuwamy pola paletki z poprzedniego miejsca
+      // loop responsible for creating paddle blocks
+      // e.g if our paddle is of width 5 - then we need to create 5 separate 'blocks'
+      // Remove the previous paddle blocks
       for (int i = 0; i < paddle.width; i++)
       {
         mvwprintw(win, paddle.y, paddle.x + i, "-");
-        // W tym warunku sprawdzamy czy nasza paletka nie znajduje się przy krawedzi ekranu
-        // Jeśli tak to nie usuwamy znaku sprzed paletki
-        // W przeciwnym wypadku zmazywalibyśmy znak krawedzi ekranu
+        // In this conditional if statement, we check if the paddle is at the edge of the window. If it is, we don't want to print a space character
+        // We would be printing a space character on the edge of the window, removing our border
         if (paddle.x - i != getbegx(win) - 1)
           mvwprintw(win, paddle.y, paddle.x - i, " ");
       }
