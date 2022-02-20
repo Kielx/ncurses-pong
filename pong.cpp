@@ -4,23 +4,18 @@
 class Pong
 {
 public:
-  int xPos;
-  int yPos;
+  int xPos, yPos;
   int width = 8;
 };
 
 class Ball
 {
 public:
-  int xPos;
-  int yPos;
-  int xVel;
-  int yVel;
+  int xPos, yPos, xVel, yVel;
 };
 
-int main(int argc, char *argv[])
+void setUpScreen()
 {
-
   WINDOW *okno;         /* Game window */
   okno = initscr();     /* Start curses mode */
   nodelay(okno, 1);     /* Dont wait for input */
@@ -28,13 +23,19 @@ int main(int argc, char *argv[])
   keypad(stdscr, TRUE); /* We get F1, F2 etc..		*/
   noecho();             /* Don't echo() while we do getch */
   curs_set(0);          /* Invisible cursor */
+  box(okno, 0, 0);      /* Draw a border around the board */
+  cbreak();             /* Line buffering disabled	*/
+}
 
-  /* Counter allows us to move the ball with delay */
-  int counter = 0;
+void singlePlayer()
+{
+  unsigned score = 0;
+  setUpScreen();
+
   Pong mainPong; /* The main pong */
   /* Set default position of main pong */
   mainPong.yPos = LINES - 1;
-  mainPong.xPos = COLS / 2;
+  mainPong.xPos = (COLS - mainPong.width) / 2;
 
   /* Set default position of ball */
   Ball ball;
@@ -43,7 +44,8 @@ int main(int argc, char *argv[])
   ball.xVel = 1;
   ball.yVel = 1;
 
-  unsigned score = 0;
+  /* Counter allows us to move the ball with delay */
+  int counter = 0;
 
   /* Main loop */
   while (true)
@@ -67,7 +69,7 @@ int main(int argc, char *argv[])
 
     clear();
     /* Move ball with delay from counter */
-    if (counter % 30 == 0)
+    if (counter % 35 == 0)
     {
       ball.xPos += ball.xVel;
       ball.yPos += ball.yVel;
@@ -79,7 +81,7 @@ int main(int argc, char *argv[])
       {
         if (ball.xPos == i)
         {
-          ball.yVel = -1;
+          ball.yVel *= -1;
           score++;
         }
       }
@@ -109,4 +111,9 @@ int main(int argc, char *argv[])
   }
 
   endwin();
+}
+int main(int argc, char *argv[])
+{
+  singlePlayer();
+  return 0;
 }
