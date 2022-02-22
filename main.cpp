@@ -4,8 +4,8 @@
 class Ball
 {
 public:
-  int x;
-  int y;
+  int x, y;
+  int x_speed, y_speed;
 };
 
 class Paddle
@@ -92,23 +92,74 @@ int move_paddle(WINDOW *win, Paddle &paddle)
   return 0;
 }
 
+/**
+ * @brief Funkcja odpowiedzialna za gre dla jednego gracza
+ *
+ * @param win - okno, w którym odbywa się gra
+ */
 void single_player(WINDOW *win)
 {
+  // Deklaracja piłki oraz jej początkowej pozycji i prędkości
   Ball ball1;
   ball1.x = 10;
   ball1.y = 10;
-  mvwprintw(win, ball1.x, ball1.y, "o");
+  ball1.x_speed = 1;
+  ball1.y_speed = 1;
+  mvwprintw(win, ball1.y, ball1.x, "o");
+  // Deklaracja paletki, jej pozycji w połowie ekranu na osi X oraz na przedostatniej linii osi Y
   Paddle paddle1;
   paddle1.x = getmaxx(win) / 2;
   paddle1.y = getmaxy(win) - 2;
   paddle1.width = 5;
+
+  /* Counter pozwala na przesuwanie piłki z opóźnieniem */
+  int counter = 0;
+
+  // Funkcja w której znajduje się cała logika gry
   while (true)
   {
+    counter++;
+    // Co 300 klatek przesuwamy piłkę, usuwając stary ślad
+    if (counter % 300 == 0)
+    {
+      mvwprintw(win, ball1.y, ball1.x, " ");
+      ball1.x += ball1.x_speed;
+      ball1.y += ball1.y_speed;
+      mvwprintw(win, ball1.y, ball1.x, "o");
+    }
+
+    /* Odbijanie piłki */
+    if (ball1.y == getmaxy(win) - 3)
+    {
+      for (int i = paddle1.x; i < paddle1.x + paddle1.width; i++)
+      {
+        if (ball1.x == i)
+        {
+          ball1.y_speed = -1;
+        }
+      }
+    }
+    if (ball1.y == getbegx(win))
+    {
+      ball1.y_speed = 1;
+    }
+    if (ball1.x == getmaxx(win) - 2)
+    {
+      ball1.x_speed = -1;
+    }
+    if (ball1.x == getbegx(win))
+    {
+      ball1.x_speed = 1;
+    }
+    /* Odbijanie piłki */
+
+    // Funkcja odpowiedzialna za przesuwanie paletki
     int quit = move_paddle(win, paddle1);
     if (quit == 1)
     {
       break;
     }
+    // Usypiamy program na 500 mikrosekund i odświeżamy okno z nowymi danymi
     usleep(500);
     wrefresh(win);
   }
