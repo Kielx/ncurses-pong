@@ -92,12 +92,41 @@ int move_paddle(WINDOW *win, Paddle &paddle)
   return 0;
 }
 
+void ball_bounce(WINDOW *win, Ball &ball, Paddle &paddle, int &score)
+{
+  if (ball.y == getmaxy(win) - 3)
+  {
+    for (int i = paddle.x; i < paddle.x + paddle.width; i++)
+    {
+      if (ball.x == i)
+      {
+        ball.y_speed = -1;
+        score++;
+      }
+    }
+  }
+  if (ball.y == getbegx(win))
+  {
+    ball.y_speed = 1;
+  }
+  if (ball.x == getmaxx(win) - 2)
+  {
+    ball.x_speed = -1;
+  }
+  if (ball.x == getbegx(win))
+  {
+    ball.x_speed = 1;
+  }
+}
+
 /**
  * @brief Funkcja odpowiedzialna za gre dla jednego gracza
  *
  * @param win - okno, w którym odbywa się gra
+ *
+ * @return int - zwraca 1 gdy użytkownik przegrał
  */
-void single_player(WINDOW *win)
+int single_player(WINDOW *win)
 {
   // Deklaracja piłki oraz jej początkowej pozycji i prędkości
   Ball ball1;
@@ -114,11 +143,12 @@ void single_player(WINDOW *win)
 
   /* Counter pozwala na przesuwanie piłki z opóźnieniem */
   int counter = 0;
-
+  int score = 0;
   // Funkcja w której znajduje się cała logika gry
   while (true)
   {
     counter++;
+    mvwprintw(win, 0, 0, "Score: %d", score / 300);
     // Co 300 klatek przesuwamy piłkę, usuwając stary ślad
     if (counter % 300 == 0)
     {
@@ -129,30 +159,30 @@ void single_player(WINDOW *win)
     }
 
     /* Odbijanie piłki */
-    if (ball1.y == getmaxy(win) - 3)
+    ball_bounce(win, ball1, paddle1, score);
+    if (ball1.y == getmaxy(win) - 1)
     {
-      for (int i = paddle1.x; i < paddle1.x + paddle1.width; i++)
+      wclear(win);
+      box(win, 0, 0);
+      mvwprintw(win, getmaxy(win) / 2, getmaxx(win) / 2, "GAME OVER");
+      mvwprintw(win, getmaxy(win) / 2 + 1, getmaxx(win) / 2, "Your score: %d", score / 300);
+      mvwprintw(win, getmaxy(win) / 2 + 2, getmaxx(win) / 2, "Press any key to continue");
+      mvwprintw(win, getmaxy(win) / 2 + 3, getmaxx(win) / 2, "Press q to quit");
+      wrefresh(win);
+      nodelay(stdscr, FALSE);
+      int ch;
+      ch = getch();
+
+      if (ch == 'q' || ch == 'Q')
+        return 1;
+      else
       {
-        if (ball1.x == i)
-        {
-          ball1.y_speed = -1;
-        }
+        wclear(win);
+        box(win, 0, 0);
+        nodelay(stdscr, TRUE);
+        return single_player(win);
       }
     }
-    if (ball1.y == getbegx(win))
-    {
-      ball1.y_speed = 1;
-    }
-    if (ball1.x == getmaxx(win) - 2)
-    {
-      ball1.x_speed = -1;
-    }
-    if (ball1.x == getbegx(win))
-    {
-      ball1.x_speed = 1;
-    }
-    /* Odbijanie piłki */
-
     // Funkcja odpowiedzialna za przesuwanie paletki
     int quit = move_paddle(win, paddle1);
     if (quit == 1)
