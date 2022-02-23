@@ -148,9 +148,9 @@ int single_player(WINDOW *win)
   while (true)
   {
     counter++;
-    mvwprintw(win, 0, 0, "Score: %d", score / 300);
-    // Co 300 klatek przesuwamy piłkę, usuwając stary ślad
-    if (counter % 300 == 0)
+    mvwprintw(win, 0, 0, "Score: %d", score / 125);
+    // Co 125 klatek przesuwamy piłkę, usuwając stary ślad
+    if (counter % 125 == 0)
     {
       mvwprintw(win, ball1.y, ball1.x, " ");
       ball1.x += ball1.x_speed;
@@ -165,7 +165,7 @@ int single_player(WINDOW *win)
       wclear(win);
       box(win, 0, 0);
       mvwprintw(win, getmaxy(win) / 2, getmaxx(win) / 2, "GAME OVER");
-      mvwprintw(win, getmaxy(win) / 2 + 1, getmaxx(win) / 2, "Your score: %d", score / 300);
+      mvwprintw(win, getmaxy(win) / 2 + 1, getmaxx(win) / 2, "Your score: %d", score / 125);
       mvwprintw(win, getmaxy(win) / 2 + 2, getmaxx(win) / 2, "Press any key to continue");
       mvwprintw(win, getmaxy(win) / 2 + 3, getmaxx(win) / 2, "Press q to quit");
       wrefresh(win);
@@ -193,6 +193,7 @@ int single_player(WINDOW *win)
     usleep(500);
     wrefresh(win);
   }
+  return 0;
 }
 
 int main()
