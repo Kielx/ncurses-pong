@@ -1,19 +1,47 @@
+/**
+ * @file main.cpp
+ * @author your name (you@domain.com)
+ * @brief Główny plik programu
+ * @version 0.1
+ * @date 2022-04-09
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
+
 #include <ncurses.h>
 #include <unistd.h>
 
+/**
+ * @brief Klasa reprezentująca piłkę, którą gracz odbija w trakcie gry
+ *
+ */
 class Ball
 {
 public:
-  int x, y;
-  int x_speed, y_speed;
+  int x;       /**< Współrzędna x piłki */
+  int y;       /**< Współrzędna y piłki */
+  int x_speed; /**< Prędkość piłki w osi X */
+  int y_speed; /**< Prędkość piłki w osi Y */
 };
 
+/**
+ * @brief Klasa reprezentująca paletkę, którą sterujemy w trakcie gry
+ *
+ */
 class Paddle
 {
 public:
-  int x, y, width;
+  int x;     /**< Współrzędna x paletki */
+  int y;     /**< Współrzędna y paletki */
+  int width; /**< Szerokość paletki */
 };
 
+/**
+ * @brief Funkcja inicjalizująca ncurses
+ *
+ * @return WINDOW* Wskaźnik na okno główne
+ */
 WINDOW *
 init_screen()
 {
@@ -92,6 +120,14 @@ int move_paddle(WINDOW *win, Paddle &paddle)
   return 0;
 }
 
+/**
+ * @brief Funkcja odpowiedzialna za odbijanie piłki od paletki i ścian
+ *
+ * @param win wskaźnik na okno gry
+ * @param ball referencja do obiektu piłki
+ * @param paddle referencja do obiektu paletki
+ * @param score referencja do obiektu wyniku
+ */
 void ball_bounce(WINDOW *win, Ball &ball, Paddle &paddle, int &score)
 {
   if (ball.y == getmaxy(win) - 3)
@@ -196,6 +232,11 @@ int single_player(WINDOW *win)
   return 0;
 }
 
+/**
+ * @brief Główna pętla programu
+ *
+ * @return int - 0 gdy program się zakończy poprawnie
+ */
 int main()
 {
 
