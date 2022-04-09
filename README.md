@@ -25,6 +25,6 @@ This PONG game serves as an introduction to C++ programming using the Ncurses li
 
 ## Author
 
-- Website - [Chris Pantak](https://pantak.net)
+- Website - [Krzysztof Pantak](https://pantak.net)
 
 ## Acknowledgments
