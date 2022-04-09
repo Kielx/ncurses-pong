@@ -2,7 +2,7 @@
 <img alt="logo" src="https://github.com/Kielx/ncurses-pong/blob/master/logo.png?raw=true" />
 </div>
 
-My-Unsplash is a modern image gallery where anyone can upload photos. The app displays them in a modern masonry layout. The app is built using Next.js with a backend hosted at firebase storage. The state is stored in the redux toolkit store. With dark mode, TailwindCSS, and responsive layout.
+Pong Game created in C++ using Ncurses library.
 
 - [About the project](#about-the-project)
   - [Built with](#built-with)
