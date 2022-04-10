@@ -1,19 +1,47 @@
+/**
+ * @file main.cpp
+ * @author Krzysztof Pantak (kielx.dev@gmail.com)
+ * @brief Main file of Cpp Ncurses Pong game
+ * @version 0.1
+ * @date 2022-04-09
+ *
+ * @copyright Copyright (c) 2022 Krzysztof Pantak
+ *
+ */
+
 #include <ncurses.h>
 #include <unistd.h>
 
+/**
+ * @brief Class representing a ball, that moves around the screen
+ *
+ */
 class Ball
 {
 public:
-  int x, y;
-  int x_speed, y_speed;
+  int x;       /**< X coordinate of the ball */
+  int y;       /**< Y coordinate of the ball */
+  int x_speed; /**< X speed of the ball */
+  int y_speed; /**< Y speed of the ball */
 };
 
+/**
+ * @brief Class representing a paddle that is controlled by the user
+ *
+ */
 class Paddle
 {
 public:
-  int x, y, width;
+  int x;     /**< X coordinate of the paddle */
+  int y;     /**< Y coordinate of the paddle */
+  int width; /**< Width of the paddle */
 };
 
+/**
+ * @brief Ncurses initliazer function
+ *
+ * @return WINDOW* Pointer to the main window
+ */
 WINDOW *init_screen()
 {
   WINDOW *win;                /* Game window pointer */
@@ -90,6 +118,14 @@ int move_paddle(WINDOW *win, Paddle &paddle)
   return 0;
 }
 
+/**
+ * @brief Function responsible for ball bouncing off the walls and paddle
+ *
+ * @param win - pointer to the game window in which the ball is located
+ * @param ball - reference to the ball object
+ * @param paddle - reference to the paddle object
+ * @param score - reference to the score object
+ */
 void ball_bounce(WINDOW *win, Ball &ball, Paddle &paddle, int &score)
 {
   if (ball.y == getmaxy(win) - 3)
@@ -194,6 +230,11 @@ int single_player(WINDOW *win)
   return 0;
 }
 
+/**
+ * @brief Main function of the program
+ *
+ * @return int - returns 0 if the program ends successfully
+ */
 int main()
 {
 
